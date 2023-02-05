@@ -12,10 +12,10 @@ public class StudentMgtService {
 
 	}
 
-	public Student find(int rollNumber) {
+	public void find(int rollNumber) {
 		StudentMgtDAL dal = new StudentMgtDAL();
-		Student obj= dal.find(rollNumber);
-        return obj;
+		 dal.find(rollNumber);
+
 	}
 
 	public void update(Student obj1) {
@@ -41,12 +41,11 @@ public class StudentMgtService {
 	}
 
 
-	public void recentupdate(Student obj5) {
+public void DeleteTable(){
 
-		StudentMgtDAL dal = new StudentMgtDAL();
-		dal.recentupdate(obj5);
-
-	}
+	StudentMgtDAL dal = new StudentMgtDAL();
+	dal.DeleteTable();
+}
 
 
 

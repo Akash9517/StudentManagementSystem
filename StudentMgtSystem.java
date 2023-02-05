@@ -1,9 +1,7 @@
 package Studentmanagement;
 
-import java.io.*;
-import java.util.Map;
-import java.util.Scanner;
 
+import java.util.Scanner;
 
 public class StudentMgtSystem {
 
@@ -29,16 +27,18 @@ public class StudentMgtSystem {
 	public int menu() {
 		System.out.println();
 		System.out.println("** MENU **");
-		System.out.println("Before adding the student check the recently added student");
+		System.out.println("Before adding the student check Table Is present In Database Or Not???");
 		System.out.println("Add Student.........1");
 		System.out.println("Search Student......2");
-		System.out.println("Update Student...3");
+		System.out.println("Update Student Details...3");
 		System.out.println("Delete Student...4");
-		System.out.println("recent added student.....5");
+		System.out.println("Table creating With Name (StudentMang).....5");
 		System.out.println("List of all student.....6");
+		System.out.println("Delete Table Name (StudentMang).....7");
 		System.out.println("Exit.............0");
 		System.out.println("------------------");
 		System.out.println("Please enter your choice:");
+
 		int input = in.nextInt();
 		return input;
 	}
@@ -48,48 +48,42 @@ public class StudentMgtSystem {
 		StudentMgtService service = new StudentMgtService();
 
 
-
 		switch (choice) {
 
 			case 1:
 				//add a student
-				System.out.println("student ko add karenge");
-				//to get all the student values
 
-				Scanner s=new Scanner(System.in);
+
+				//to get all the student values
+				Scanner s = new Scanner(System.in);
 
 				System.out.println("enter the name");
-				 n=s.nextLine();
+				n = s.nextLine();
 
 				System.out.println("enter the roll");
-				 r=s.nextInt();
+				r = s.nextInt();
 
 				s.nextLine();
 				System.out.println("enter the Department");
-				 D=s.nextLine();
+				D = s.nextLine();
 
-				Student student = new Student(n,r,D);
+				Student student = new Student(n, r, D);
 
 				service.save(student);
 
-				System.out.println("Student Added Successfully");
+
 				break;
 
 			case 2:
-				//search a student
+				//search a student by rollNo
 
 				System.out.println("student ko search karenge");
 
-				Scanner r1=new Scanner(System.in);
+				Scanner r1 = new Scanner(System.in);
 				System.out.println("enter roll to search");
-				int rolltosearch= r1.nextInt();
+				int rolltosearch = r1.nextInt();
 
-				 Student obj1=service.find(rolltosearch);
-
-				System.out.println(obj1);
-
-				System.out.println("Search successfully");
-
+				service.find(rolltosearch);
 
 
 				break;
@@ -97,26 +91,25 @@ public class StudentMgtSystem {
 
 			case 3:
 
-				//update a student
+				//update a student data
 
-				Scanner s3=new Scanner(System.in);
+				Scanner s3 = new Scanner(System.in);
 				System.out.println("enter the rollno to update");
 				int rollNumbertoupdate = s3.nextInt();
 
 				System.out.println("enter the name to update");
 				s3.nextLine();
-				String n3=s3.nextLine();
+				String n3 = s3.nextLine();
 
 				System.out.println("enter the department");
-				String depart=s3.nextLine();
+				String depart = s3.nextLine();
 
-				Student obj3 = new Student(n3,rollNumbertoupdate,depart);
+				Student obj3 = new Student(n3, rollNumbertoupdate, depart);
 
 				service.update(obj3);
-				System.out.println("Student updated sucessfullys");
+
 
 				break;
-
 
 
 			case 4:
@@ -125,40 +118,42 @@ public class StudentMgtSystem {
 
 				System.out.println("student ko delete karenge");
 
-				Scanner s4=new Scanner(System.in);
+				Scanner s4 = new Scanner(System.in);
 				System.out.println("enter the rollno to delete");
 				int rollNumbertodelete = s4.nextInt();
 
-				Student obj4 = new Student(n,r,D);
+				Student obj4 = new Student(n, r, D);
 
 				service.delete(rollNumbertodelete);
 
-				System.out.println("Student delete sucessfully");
 
 				break;
 			case 5:
 
-				//to get roll no information
-				System.out.println("student list ");
+				// Table Creating.......
+				Scanner s5 = new Scanner(System.in);
+				StudentMgtDAL obj = new StudentMgtDAL();
 
-				Student obj5= new Student(n,r,D);
-
-				service.recentupdate(obj5);
+				System.out.println(" Table Name With Field is : StudentMang( rollNo number,Name varchar(20), dept varchar(20))");
+				obj.tableCreate();
 
 
 				break;
 
-
-
 			case 6:
-				// recent update
+				// List all student
 				service.Allstudentlist();
 
 				break;
 
+			case 7:
+				// Drop table
+		     	service.DeleteTable();
+
+				break;
+
 			case 0:
-
-
+				// exiting
 				System.out.println("Thanks for using");
 				break;
 

@@ -1,145 +1,206 @@
 package Studentmanagement;
 
-import java.io.*;
-import java.util.Collections;
-import java.util.HashMap;
+import java.sql.*;
+import java.util.Scanner;
+
 
 public class StudentMgtDAL {
 
-
-	public Student obj1=null;
-
-	public void save(Student obj)
-	{
+	public void save(Student obj) {
 		try {
 
-			FileOutputStream fout=new FileOutputStream("C:\\Users\\Akash Pansare\\Desktop\\Studentmanagement\\studentfiles\\"+String.valueOf(obj.getRollNumber()) +".txt");
-			ObjectOutputStream oos=new ObjectOutputStream(fout);
-			oos.writeObject(obj);
-			oos.close();
-			fout.close();
-			System.out.println("adding student details done");
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "system", "cdac123");
+
+			String tempname = obj.getName();
+			String tempdepart = obj.getDepartment();
+			int temproll = obj.getRollNumber();
+
+			PreparedStatement psmt = con.prepareStatement("insert into StudentMang values(?,?,?)");
+
+
+			psmt.setInt(1, temproll);
+			psmt.setString(2, tempname);
+			psmt.setString(3, tempdepart);
+
+
+			psmt.executeUpdate();
+			System.out.println("Student Added Successfully");
+
 
 		} catch (Exception a) {
 
-			System.out.println("exception");
+			System.out.println("Table Not Exist Kindly Create Table By Pressing 5 Do other Task");
 		}
 
 	}
 
 
-	public Student find(int rollNumber) {
+	public void find(int rollNumber) {
 
 		try {
-
-			FileInputStream fin=new FileInputStream("C:\\Users\\Akash Pansare\\Desktop\\Studentmanagement\\studentfiles\\"+String.valueOf(rollNumber)+".txt");
-			ObjectInputStream ois=new ObjectInputStream(fin);
-			 obj1=(Student) ois.readObject();
-
-			ois.close();
-			fin.close();
-//			System.out.println("Address is :"+ obj1);
-			
-		} catch (Exception a) {
-
-			System.out.println("exception"+a);
-		}
-
-		return obj1;
-	}
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "system", "cdac123");
 
 
+			Statement smt = con.createStatement();
+			ResultSet rs = smt.executeQuery("select * from StudentMang where  ROLLNO=" + rollNumber  );
 
-	public void update(Student obj3)
-	{
+			while (rs.next()) {
+				int tempRoll = rs.getInt(1);
+				String tempName = rs.getString(2);
+				String tempDept = rs.getString(3);
 
-		try {
+				System.out.println(" Student roll is :  " + tempRoll);
+				System.out.println(" Student name is : " + tempName);
+				System.out.println(" Student dept is : " + tempDept);
 
-			FileOutputStream fout=new FileOutputStream("C:\\Users\\Akash Pansare\\Desktop\\Studentmanagement\\studentfiles\\"+String.valueOf(obj3.getRollNumber())+".txt");
-			ObjectOutputStream oos=new ObjectOutputStream(fout);
-			oos.writeObject(obj3);
-			oos.close();
-			fout.close();
-			System.out.println("process done");
+			}
+
+			rs.close();
+			System.out.println("Search Sucessfully Done!!!!");
+
 
 		} catch (Exception a) {
 
-			System.out.println("exception");
+			System.out.println("exception" + a);
 		}
 
 
 	}
 
 
-	public void delete(int rollNumbertodelete)
-	{
+	public void update(Student obj3) {
 
 
 		try {
 
-            File fordelete=new File("C:\\Users\\Akash Pansare\\Desktop\\Studentmanagement\\studentfiles\\"+String.valueOf(rollNumbertodelete)+".txt");
+			Class.forName("oracle.jdbc.driver.OracleDriver");
 
-			fordelete.delete();
+			Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "system", "cdac123");
 
+			String s = "update StudentMang set name =? , dept=? where rollno=?";
+
+			int tempRoll = obj3.getRollNumber();
+			String UpdatedName = obj3.getName();
+			String updatedDept = obj3.getDepartment();
+
+			PreparedStatement psmt = con.prepareStatement(s);
+			psmt.setString(1, UpdatedName);
+			psmt.setString(2, updatedDept);
+			psmt.setInt(3, tempRoll);
+
+			psmt.executeUpdate();
+			con.close();
+
+			System.out.println("Student Name And Dept Is Updated!!!!");
 
 
 		} catch (Exception a) {
 
-			System.out.println("exception"+a);
+			System.out.println(a);
 		}
 
 
 	}
 
+
+	public void delete(int rollNumbertodelete) {
+
+
+		try {
+
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+
+			Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "system", "cdac123");
+
+			Statement smt = con.createStatement();
+			ResultSet rs = smt.executeQuery("delete  from StudentMang where rollno=" + rollNumbertodelete);
+
+			rs.close();
+			con.close();
+			System.out.println(" row Deleted sucessfully !!!!!");
+
+		} catch (Exception a) {
+
+			System.out.println("exception" + a);
+		}
+
+
+	}
+
+	public void tableCreate() {
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "system", "cdac123");
+
+
+			Statement smt = con.createStatement();
+			smt.execute("create table StudentMang( rollNo number,Name varchar(20), dept varchar(20))");
+
+			System.out.println("Table Created Sucessfully !!!!!");
+
+		} catch (Exception e) {
+
+			System.out.println("Table Already Exist Please Insert Data Into Table");
+		}
+
+
+	}
 
 
 	public void Allstudentlist() {
 
 
-		File file=null,path1=null;
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "system", "cdac123");
 
-		String[] paths;
-		try{
-			file = new File("C:\\Users\\Akash Pansare\\Desktop\\Studentmanagement\\studentfiles");
+			Statement smt = con.createStatement();
+			ResultSet rs = smt.executeQuery("select * from StudentMang");
 
-			paths=file.list();
 
-			for(String path:paths) {
+			System.out.println("Student Details  !!!!!!\n");
+			while (rs.next()) {
 
-				System.out.println("File :"+path);
+				int rollno = rs.getInt(1);
+				String name = rs.getString(2);
+				String dept = rs.getString(3);
+
+				System.out.println("The rollno is :" + rollno);
+				System.out.println("The  Name :" + name);
+				System.out.println("The  dept :" + dept);
+				System.out.println("\n..............................");
 
 			}
 
-		}catch (Exception e)
-		{
-			e.printStackTrace();
+		} catch (Exception e) {
+			System.out.println(e);
 		}
 
 	}
 
 
-	public void recentupdate(Student obj5) {
-
+	public void DeleteTable() {
 		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "system", "cdac123");
 
-			FileInputStream fin=new FileInputStream("C:\\Users\\Akash Pansare\\Desktop\\Studentmanagement\\studentfiles\\"+String.valueOf(obj5.getRollNumber())+".txt");
-			ObjectInputStream ois=new ObjectInputStream(fin);
-			obj5=(Student) ois.readObject();
 
-			ois.close();
-			fin.close();
-			System.out.println("Address is :"+ obj5);
+			Statement smt = con.createStatement();
+			smt.execute("drop table StudentMang");
 
-		} catch (Exception a) {
+			System.out.println("Table Deleted Sucessfully !!!!!");
 
-			System.out.println("exception"+a);
+		} catch (Exception e) {
+
+			System.out.println("Table Already Exist Please Insert Data Into Table");
 		}
 
+
 	}
-
-
-
-
 
 
 }
+
+
